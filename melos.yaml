@@ -1,0 +1,38 @@
+name: coverage_issue
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  test:selective_unit_test:
+    run: melos exec --dir-exists="test" --fail-fast -- flutter test --no-pub --coverage
+    description: Run Flutter tests for a specific package in this project.
+    packageFilters:
+      flutter: true
+      dirExists: test
+
+  test:
+    run: melos run test:selective_unit_test --no-select
+    description: Run all Flutter tests in this project.
+
+  clean:
+    run: melos exec -- flutter clean
+
+  build_runner:
+    run: melos exec -- dart run build_runner build --delete-conflicting-outputs
+    packageFilters:
+      flutter: true
+
+  analyze:
+    run: melos exec -- flutter analyze .
+    description: Run Flutter code analysis on all packages.
+
+  gen_coverage: melos exec -- "\$MELOS_ROOT_PATH/combine_coverage.sh"
+
+  update-goldens:
+    run: melos exec -- flutter test --update-goldens
+
+    packageFilters:
+      dirExists: test
+    description: Re-generate all golden test files
